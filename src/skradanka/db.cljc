@@ -1,5 +1,6 @@
 (ns skradanka.db
-  (:require [datascript.core :as d]))
+  (:require [datascript.core :as d]
+            [clojure.string :as str]))
 
 ;;; DB setup
 
@@ -155,6 +156,91 @@
    "secretly right" "protective of observatory" "protective of observatory"
    "hates this place"])
 
+(def neil-breen-bingo
+    ["Someone Drunk",
+     "Pool Party",
+     "Driving in the Desert",
+     ;; "Greenscreen",
+     "Magic Neil Breen",
+     ;; "Flubbing their line",
+     "Skull or Skeleton",
+     "Shirtless Neil Breen",
+     ;; "Fade effect",
+     "Neil Breen Talks to Himself",
+     "Terrible People",
+     "Hacking",
+     "Someone Disapeers",
+     "Woman with no Bra",
+     ;; "Porno Quality Acting",
+     "Ghosts",
+     "Ripped Clothes",
+     "Someone Turns young",
+     "Topless Woman lying face down",
+     ;; "Acting Achieves opposite effect",
+     "Dead Wife",
+     "Clothes on the Ground",
+     ;; "Bad Gun Effects",
+     "Violence against Laptops",
+     "Throwing Stuff",
+     "Magic Rock",
+     ;; "Shot of Someones feet",
+     ;; "Fake Sound Effects",
+     "Nonspecific companies",
+     ;; "Bad Lip Syncing",
+     "Corporate businessmen",
+     ;; "Stock Footage",
+     ;; "Sound does not Sync",
+     "Blood on Neil Breen's Face",
+     "Characters Forget something happened",
+     ;; "Repurposed Prop",
+     ;; "Stock Music",
+     ;; "Scene that is leftover footage",
+     ;; "Dream Sequences",
+     ;; "Actors Forget their lines",
+     ;; "Repourposed location",
+     "Old Technology",
+     ;; "People clearly not in the same shot",
+     "Neil Breen is Better than You",
+     "Creepy Smile",
+     "Lazer Pointer",
+     ;; "Neil Breen Credits Himself",
+     "Terrible Death Scene"])
+
+(defn describe-trait [trait]
+  (get {"Shirtless Neil Breen"                 "is shirtless"
+        "Lazer Pointer"                        "has a laser pointer in hand"
+        "Ghosts"                               "is a ghost"
+        "Woman with no Bra"                    "totally has no bra"
+        "Throwing Stuff"                       "is throwing stuff"
+        "Clothes on the Ground"                "has thrown their clothes on the ground"
+        "Neil Breen Talks to Himself"          "is talking to themself"
+        "Neil Breen Credits Himself"           "credits themself"
+        "Someone Drunk"                        "is drunk"
+        "Characters Forget something happened" "forgot what they were doing"
+        "Corporate businessmen"                "is a corporate businessperson"
+        "Someone Turns young"                  "suddenly seems much younger"
+        "Nonspecific companies"                "is from one of those damned evil companies"
+        "Terrible Death Scene"                 "is dying horribly"
+        "Magic Rock"                           "is cherishing a magical rock"
+        "Topless Woman lying face down"        "is topless lying on the ground face down"
+        "Blood on Neil Breen's Face"           "has blood on their face"
+        "Dead Wife"                            "has just lost a spouse"
+        "Creepy Smile"                         "has a creepy smile"
+        "Driving in the Desert"                "is driving through the desert"
+        "Violence against Laptops"             "is smashing a laptop around"
+        "Neil Breen is Better than You"        "thinks they're better than everyone"
+        "Skull or Skeleton"                    "is carrying a skull"
+        "Magic Neil Breen"                     "is a magical being"
+        "Ripped Clothes"                       "has ripped their clothes"
+        "Pool Party"                           "is throwing a pool party"
+        "Hacking"                              "is hacking into a computer system"
+        "Someone Disapeers"                    "has recently disappeared"
+        "Terrible People"                      "is a terrible person"
+        "Old Technology"                       "uses a lot of retro technology"}
+       trait trait))
+
+
+
 (def all-roles
   ;; from https://github.com/ExpressiveIntelligence/CozyMysteryCo/blob/master/asp/characterGen/identities.lp
   ;; note some duplicates to make them able to show up more than once in a single cast
@@ -163,6 +249,20 @@
    :observatory-caretaker :groundskeeper :psychic :reporter :skier
    :astronomer :volunteer :high-schooler :giftshopkeep :security
    :tourist :tour-guide :archivist])
+
+(def neil-breen-roles
+  [:neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character
+   :neil-breen-character])
 
 (defn gen-ship [id1 id2]
   (let [charge (rand-nth [:like :dislike :neutral])]
@@ -181,6 +281,26 @@
         tropes-b (take size (shuffle secondary-tropes))
         traits   (take size (shuffle all-traits))
         roles    (take size (shuffle all-roles))
+        chars    (mapv #(-> {:type   :char
+                             :db/id  %1
+                             :name   %2
+                             :role   %3
+                             :trope  [%4 %5]
+                             :trait  [%6]
+                             :values (vec (take 2 (shuffle all-values)))})
+                       ids names roles tropes-a tropes-b traits)
+        pairs    (for [id1 ids id2 ids :when (not= id1 id2)] [id1 id2])
+        charges  (map (fn [[id1 id2]] (gen-ship id1 id2)) pairs)]
+    (into chars charges)))
+
+(defn gen-cast-neil-breen [{:keys [:size]
+                 :or   {size 2}}]
+  (let [ids      (take size (map (comp - inc) (range)))
+        names    (take size (shuffle char-names))
+        tropes-a (take size (shuffle primary-tropes))
+        tropes-b (take size (shuffle secondary-tropes))
+        traits   (take size (shuffle neil-breen-bingo))
+        roles    (take size (shuffle neil-breen-roles))
         chars    (mapv #(-> {:type   :char
                              :db/id  %1
                              :name   %2
@@ -489,10 +609,66 @@
     :harms-value [:communalism :progress :science]
     :significance :low}
 
-])
+  
 
-(defn action->str [action]
-  (str (name (:name action)) " " (pr-str (:vars action))))
+   ])
+
+(defn action-name->str [action-name]
+  (get {:disparage-others-value    "disparages value held by"
+        :discuss-shared-value      "discusses a shared value with"
+        :praise-others-value       "praises value held by"
+        :make-request              "makes a request of"
+        :praise-own-value          "praises their own value to"
+        :notice-presence           "notices the presence of"
+        :ignore                    "is ignoring"
+        :insult                    "insults"
+        :accuse-of-violating-value "thinks that a value has been violated by"
+        :compliment                "compliments"
+        :confide-in                "confides in"
+        :confess-to                "confesses to"
+        :accuse-of-hypocrisy       "accuses the hypocritical"}
+       action-name (str action-name)))
+
+(defn action->str
+  ([action]
+   (let [[c1-id c1-name c2-id c2-name & action-vals] (:vars action)]
+     (str c1-name " " (action-name->str (:name action)) " " c2-name
+          (when (seq action-vals) (str ", that of " (str/join " " (map name action-vals)))))))
+  ([action db]
+   (let [[c1-id c1-name c2-id c2-name & action-vals] (:vars action)
+         c1 (describe-char db c1-id)
+         c2 (describe-char db c2-id)]
+     (str c1-name
+          " who " (describe-trait (first (:trait c1)))
+          " " (action-name->str (:name action)) " " c2-name
+          (when (seq action-vals) (str ", that of " (str/join " " (map name action-vals))))
+          (when-let [harms (:harms action)]
+            (let [harms-value (:harms-value action)]
+              (str ". This harms " (case harms
+                                     [2] c2-name
+                                     [0] c1-name
+                                     [0 2] "them both"
+                                     "noone")
+                   " and hurts "
+                   (str/join ", " (into #{}
+                                        (map (fn [v] (cond (keyword? v) (name v)
+                                                           (integer? v) (name (first action-vals))))
+                                             harms-value)))
+                   " as a result")))
+          (when-let [helps (:helps action)]
+            (let [helps-value (:helps-value action)]
+              (str ". This helps " (case helps
+                                     [2] c2-name
+                                     [0] c1-name
+                                     [0 2] "them both"
+                                     "noone")
+                   " and strengthens "
+                   (str/join ", " (into #{}
+                                        (map (fn [v] (cond (keyword? v) (name v)
+                                                           (integer? v) (name (first action-vals))))
+                                             helps-value)))
+                   " as a result")))
+          ". " c2-name " "(describe-trait (first (:trait c2))) "."))))
 
 (defn print-actions! [actions]
   (println "==== ACTIONS: ====")
@@ -533,15 +709,22 @@
         harmed-values (map #(if (integer? %) (nth (:vars action) %) %) (:harms-value action))
         helped-values (map #(if (integer? %) (nth (:vars action) %) %) (:helps-value action))
         action        (assoc action
-                        :perp perp-id
-                        :harms harmed-ids
-                        :helps helped-ids
-                        :harms-value harmed-values
-                        :helps-value helped-values)]
+                             :perp perp-id
+                             :harms harmed-ids
+                             :helps helped-ids
+                             :harms-value harmed-values
+                             :helps-value helped-values)]
     (d/transact! conn [action])))
 
 (defn gen-world! [{:keys [conn]}]
   (let [cast (gen-cast {:size 2})]
+    (d/reset-conn! conn (d/empty-db schema))
+    (d/transact! conn cast)
+    (doseq [char cast :when (map? char)]
+      (prn char))))
+
+(defn gen-world-neil-breen! [{:keys [conn]}]
+  (let [cast (gen-cast-neil-breen {:size 12})]
     (d/reset-conn! conn (d/empty-db schema))
     (d/transact! conn cast)
     (doseq [char cast :when (map? char)]
@@ -566,6 +749,7 @@
     (perform-action! conn action)
     action)
 
+  
 
 
   )

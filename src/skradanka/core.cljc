@@ -40,8 +40,9 @@
 
   ;; felt worldgen
   (let [conn (get-conn)
-        _ (db/gen-world! {:conn (get-conn)})
+        _ (db/gen-world-neil-breen! {:conn (get-conn)})
         chars (db/describe-all-chars @conn)]
+    (println chars)
     (swap! *state assoc :characters chars))
 
 
@@ -76,9 +77,11 @@
            (fn [state]
              (-> state
                  (update :turn inc)
-                 (assoc :textmode (textmode/calculate-textmode state)
-                        :console (str/join "\n" [(str "Turn " turn)
-                                                 (str action!)])))))))
+                 (assoc :textmode (textmode/calculate-textmode state))
+                 (update :console (fn [val]
+                                    (str/join "\n" [(str "Turn " turn)
+                                                    (str (db/action->str action! @conn))
+                                                    val]))))))))
 
 
 (defn tick [game]
@@ -99,7 +102,7 @@
          :as   state} @*state
         game-width  (utils/get-width game)
         game-height (utils/get-height game)]
-    (when (and (pos? game-width) (pos? game-height))
+    #_(when (and (pos? game-width) (pos? game-height))
       ;; render the blue background
       (c/render game (update screen-entity :viewport
                              assoc :width game-width :height game-height))
@@ -131,7 +134,8 @@
               (->> (assoc state
                           :player-width player-width
                           :player-height player-height
-                          :characters (db/describe-all-chars @conn))
+                          :characters (db/describe-all-chars @conn)
+                          )
                    (move/move game)
                    (move/prevent-move game)
                    (move/animate game))))))))
