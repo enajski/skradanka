@@ -27,8 +27,8 @@
                        :conn             db/conn
                        :turn             0
                        :characters []
-                       :textmode "X"
-                       :console "X"}))
+                       :textmode ""
+                       :console ""}))
 
 (defn get-conn []
   (:conn @*state))
@@ -39,11 +39,14 @@
   (gl game blendFunc (gl game SRC_ALPHA) (gl game ONE_MINUS_SRC_ALPHA))
 
   ;; felt worldgen
-  (let [conn (get-conn)
-        _ (db/gen-world-neil-breen! {:conn (get-conn)})
-        chars (db/describe-all-chars @conn)]
+  (let [conn    (get-conn)
+        _       (db/gen-world-neil-breen! {:conn (get-conn)})
+        chars   (db/describe-all-chars @conn)
+        choices (db/draw-actions @conn 3)]
     (println chars)
-    (swap! *state assoc :characters chars))
+    (swap! *state assoc
+           :characters chars
+           :choices choices))
 
 
   ;; load images and put them in the state atom
@@ -51,7 +54,7 @@
                     :walk2 "player_walk2.png"
                     :walk3 "player_walk3.png"}]
     (utils/get-image path
-      (fn [{:keys [data width height]}]
+                     (fn [{:keys [data width height]}]
         (let [;; create an image entity (a map with info necessary to display it)
               entity (e/->image-entity game data width height)
               ;; compile the shaders so it is ready to render
@@ -66,22 +69,37 @@
    :clear {:color [(/ 173 255) (/ 216 255) (/ 230 255) 1] :depth 1}})
 
 
-(defn tick-sim []
-  (let [{:keys [turn
-                conn]}
-        @*state
-        action! (db/perform-random-action! conn)]
-    (println "Turn " turn)
+(defn tick-sim
+  ([]
+   (let [{:keys [turn conn]} @*state
+         action! (db/perform-random-action! conn)]
+     (println "Turn " turn)
 
-    (swap! *state
-           (fn [state]
-             (-> state
-                 (update :turn inc)
-                 (assoc :textmode (textmode/calculate-textmode state))
-                 (update :console (fn [val]
-                                    (str/join "\n" [(str "Turn " turn)
-                                                    (str (db/action->str action! @conn))
-                                                    val]))))))))
+     (swap! *state
+            (fn [state]
+              (-> state
+                  (update :turn inc)
+                  (assoc :textmode (textmode/calculate-textmode state))
+                  (update :console (fn [val]
+                                     (str/join "\n" [val
+                                                     (str "Scene " turn)
+                                                     (str (db/action->str action! @conn))]))))))))
+  ([action]
+   (println "action: " action)
+   (let [{:keys [turn conn]} @*state
+         action! (db/perform-action! conn action)]
+     (println "Turn " turn)
+     (println "Action!:" action!)
+
+     (swap! *state
+            (fn [state]
+              (-> state
+                  (update :turn inc)
+                  (assoc :textmode (textmode/calculate-textmode state))
+                  (update :console (fn [val]
+                                     (str/join "\n" [val
+                                                     (str "Scene " turn)
+                                                     (str (db/action->str action @conn))])))))))))
 
 
 (defn tick [game]
@@ -102,7 +120,7 @@
          :as   state} @*state
         game-width  (utils/get-width game)
         game-height (utils/get-height game)]
-    #_(when (and (pos? game-width) (pos? game-height))
+    (when (and (pos? game-width) (pos? game-height))
       ;; render the blue background
       (c/render game (update screen-entity :viewport
                              assoc :width game-width :height game-height))
@@ -134,7 +152,7 @@
               (->> (assoc state
                           :player-width player-width
                           :player-height player-height
-                          :characters (db/describe-all-chars @conn)
+                          ;; :characters (db/describe-all-chars @conn)
                           )
                    (move/move game)
                    (move/prevent-move game)

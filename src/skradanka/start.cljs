@@ -1,7 +1,9 @@
 (ns skradanka.start
   (:require [skradanka.core :as c]
+            [skradanka.copywrite :as copywrite]
             [play-cljc.gl.core :as pc]
-            [goog.events :as events])
+            [goog.events :as events]
+            [reagent.core :as reagent])
   (:require-macros [skradanka.music :refer [build-for-cljs]]))
 
 (defn resize [{:keys [context] :as game}]
@@ -49,6 +51,52 @@
       (when-let [k (keycode->keyword (.-keyCode event))]
         (swap! c/*state update :pressed-keys disj k)))))
 
+
+(defonce textmode-div (js/document.querySelector "#textmode"))
+
+(defonce console-div (js/document.querySelector "#console"))
+
+(defonce choices-div (js/document.querySelector "#choices"))
+
+
+(defn choice-item [i choice]
+  [:button {:data-choice-id i
+            :on-click (fn [e]
+                        (when-let [choice-id (int (.-data-choice-id (.-target e)))]
+                          (println choice-id)
+                          (let [{:keys [choices]} @c/*state
+                                choice (get choices choice-id)]
+                            (println choice)
+                            (c/tick-sim choice)
+
+                            (let [{textmode-value :textmode
+                                   console-value  :console} @c/*state]
+                              (set! (.-innerHTML textmode-div) textmode-value)
+                              (set! (.-innerHTML console-div) console-value)))))}
+   (copywrite/action->button-text choice)])
+
+
+(defn choices-list [choices]
+  [:div
+   (map-indexed
+    (fn [i choice]
+      (choice-item i choice))
+    choices)])
+
+
+(defn root []
+  (let [{:keys [choices]} @c/*state]
+    [:div#root
+     (choices-list choices)]))
+
+
+(defn mount-reagent []
+  (reagent/render [root]
+                  choices-div))
+
+
+
+
 ;; start the game
 
 (defonce context
@@ -60,6 +108,7 @@
     (listen-for-mouse canvas)
     (listen-for-keys)
     (c/init initial-game)
+    (mount-reagent)
     (game-loop initial-game)
     context))
 
@@ -77,10 +126,6 @@
         (if (swap! play-music? not)
           (.play audio)
           (.pause audio))))
-
-(defonce textmode-div (js/document.querySelector "#textmode"))
-
-(defonce console-div (js/document.querySelector "#console"))
 
 
 

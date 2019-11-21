@@ -2,7 +2,9 @@
  :deps    {org.clojure/clojure {:mvn/version "1.10.1"}
            tile-soup           {:mvn/version "0.3.1"}
            edna                {:mvn/version "1.6.0"}
-           datascript          {:mvn/version "0.18.7"}}
+           datascript          {:mvn/version "0.18.7"}
+           hiccup              {:mvn/version "1.0.5"}
+           reagent             {:mvn/version "0.9.0-rc3"}}
  :aliases {:dev       {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.520"}
                                     com.bhauman/figwheel-main {:mvn/version "0.2.3"}
                                     orchestra                 {:mvn/version "2018.12.06-2"}

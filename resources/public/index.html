@@ -1,14 +1,15 @@
 <html>
-<head>
-  <title>Hello, world!</title>
+    <head>
+        <title>Neil Breen film script generator</title>
   <style>
    html, body {
        padding: 0px;
        margin: 0px;
+       font-family: monospace;
    }
 
    canvas {
-       width: 100%
+       width: 100%;
        height: 100%;
    }
 
@@ -23,25 +24,34 @@
 
    #console {
        position: absolute;
-       top: 530px;
+       top: 130px;
        left: 20px;
        font-family: monospace;
        font-size: 14px;
+       white-space: pre-wrap;
    }
 
 
    #audio-button {
        font-size: 20px;
        position: absolute;
-       top: 20px;
+       top: 180px;
        right: 20px;
    }
 
    #next-turn-button {
        font-size: 20px;
        position: absolute;
-       top: 50px;
+       top: 210px;
        right: 20px;
+   }
+
+   #choices {
+       top: 0px;
+       border: 1px solid black;
+       width: 80%;
+       height: 200px;
+       position: absolute;
    }
 
   </style>
@@ -49,11 +59,14 @@
 
 <body>
   <canvas></canvas>
+  <h1 class=".fixed">Neil Breen film script generator</h1>
+  <h4 class=".fixed">T0taLLy exP3rim3ntaL v0.0.2</h4>
   <audio id="audio" loop="loop"></audio>
   <button id="audio-button">Toggle Music</button>
-  <button id="next-turn-button">Next Turn!</button>
+  <button id="next-turn-button">Next Scene!</button>
+  <div id="choices"></div>
   <pre id="textmode"></pre>
-      <pre id="console"></pre>
+  <pre id="console"></pre>
   <script src="main.js"></script>
 </body>
 </html>

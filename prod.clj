@@ -59,7 +59,7 @@
     (println "Building main.js")
     (delete-children-recursively! (io/file out-dir))
     (api/build "src" {:main          'skradanka.start
-                      :optimizations :advanced
+                      :optimizations :simple
                       :output-to     out-file
                       :output-dir    out-dir})
     (delete-children-recursively! (io/file out-dir))

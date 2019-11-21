@@ -3,7 +3,8 @@
             [clojure.java.io :as io]))
 
 (def music
-  [:electric-guitar-clean {:tempo 130}
+  [:electric-guitar-clean {:tempo 130
+                           :octave 0}
    1/8 :c :c 1/2 :a 1/8 :f :g :f
    1/2 :d 1/8 :d :d 1/2 :a# 1/8 :g :a :g
    1/2 :e 1/8 :e :e 1/2 :+c 1/8 :a :a# :+c

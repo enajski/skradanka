@@ -8,12 +8,12 @@
   {:trope  {:db/cardinality :db.cardinality/many}
    :trait  {:db/cardinality :db.cardinality/many}
    :values {:db/cardinality :db.cardinality/many}
-   ; represents a relationship between two characters
+                                        ; represents a relationship between two characters
    :ship   {:db/valueType :db.type/ref
             :db/cardinality :db.cardinality/many}
    :src    {:db/valueType :db.type/ref}
    :dst    {:db/valueType :db.type/ref}
-   ; action stuff
+                                        ; action stuff
    :perp   {:db/valueType :db.type/ref} ; whodunnit?
    :harms  {:db/valueType :db.type/ref
             :db/cardinality :db.cardinality/many}
@@ -95,10 +95,10 @@
          [?action :harms ?char]
          [?action :helps ?char])
 
-    [(directly-involves-both ?action ?c1 ?c2)
-     (directly-involves ?action ?c1)
-     (directly-involves ?action ?c2)]]
-])
+     [(directly-involves-both ?action ?c1 ?c2)
+      (directly-involves ?action ?c1)
+      (directly-involves ?action ?c2)]]
+    ])
 
 (defonce conn
   (d/create-conn schema))
@@ -106,34 +106,45 @@
 ;;; character generation
 
 (def char-names [
-"Ada" "Adrian" "Alexis" "Alice" "Amber" "Andy" "Audrey"
-"Becca" "Bob" "Brian"
-"Catherine" "Chris" "Cindy" "Colin"
-"Dan" "Dave" "Dorothy"
-"Edgar" "Eliza" "Emily" "Esteban" "Evan" "Evie"
-"Fred"
-"Georgia" "Grace"
-"Heather" "Henry"
-"Isaac" "Isabel" "Ivan"
-"Jason" "Jess" "Jocelyn" "John" "Josie" "Julie"
-"Karin" "Kate" "Kevin"
-"Laura" "Lea" "Lex" "Louis"
-"Mark" "Mary" "Maureen"
-"Nathan" "Nick"
-"Omar"
-"Peter"
-"Quinn"
-"Rachel" "Ross"
-"Sarah"
-"Tracy"
-"Vi"
-"Will"
-"Zed"
-])
+                 ;; "Ada" "Adrian" "Alexis" "Alice" "Amber" "Andy" "Audrey"
+                 "Aly" "Amy" "Aaron" "Altair" "Amanda" "Amber"
+                 "Becca" "Bob" "Brian"
+                 ;; "Catherine" "Chris" "Cindy" "Colin"
+                 "Cale" "Carl" "Cindy"
+                 ;; "Dan" "Dave" "Dorothy"
+                 "Dylan" "Donna"
+                 "Edgar" "Eliza" "Emily" "Esteban" "Evan" "Evie"
+                 "Emily"
+                 "Fred"
+                 "Georgia" "Grace"
+                 "Heather" "Henry"
+                 "Isaac" "Isabel" "Ivan"
+                 "Jason" "Jess" "Jocelyn" "John" "Josie" "Julie" "Jesus"
+                 "Jim"
+                 "Karin" "Kate" "Kevin"
+                 "Laura" "Lea" "Lex" "Louis"
+                 "Leah"
+                 "Mark" "Mary" "Maureen"
+                 "Megan"
+                 "Nathan" "Nick"
+                 "Neil Breen"
+                 "Omar"
+                 "Peter"
+                 "Quinn"
+                 "Rachel" "Ross"
+                 "Robert"
+                 "Sarah"
+                 ;; "Tracy"
+                 "Thgil"
+                 "Vi"
+                 "Will"
+                 "Zed"
+                 ])
 
 (def all-values
   ;; from game design doc
-  [:science :survival :communalism :funding :comfort :order :faith :progress])
+  [:science :survival :communalism :funding :comfort :order :faith :progress
+   :technoutopianism :theocracy])
 
 (def primary-tropes
   ["Absent-Minded Professor" "Big Fun" "Boss" "Bad-to-the-bone"
@@ -157,54 +168,101 @@
    "hates this place"])
 
 (def neil-breen-bingo
-    ["Someone Drunk",
-     "Pool Party",
-     "Driving in the Desert",
-     ;; "Greenscreen",
-     "Magic Neil Breen",
-     ;; "Flubbing their line",
-     "Skull or Skeleton",
-     "Shirtless Neil Breen",
-     ;; "Fade effect",
-     "Neil Breen Talks to Himself",
-     "Terrible People",
-     "Hacking",
-     "Someone Disapeers",
-     "Woman with no Bra",
-     ;; "Porno Quality Acting",
-     "Ghosts",
-     "Ripped Clothes",
-     "Someone Turns young",
-     "Topless Woman lying face down",
-     ;; "Acting Achieves opposite effect",
-     "Dead Wife",
-     "Clothes on the Ground",
-     ;; "Bad Gun Effects",
-     "Violence against Laptops",
-     "Throwing Stuff",
-     "Magic Rock",
-     ;; "Shot of Someones feet",
-     ;; "Fake Sound Effects",
-     "Nonspecific companies",
-     ;; "Bad Lip Syncing",
-     "Corporate businessmen",
-     ;; "Stock Footage",
-     ;; "Sound does not Sync",
-     "Blood on Neil Breen's Face",
-     "Characters Forget something happened",
-     ;; "Repurposed Prop",
-     ;; "Stock Music",
-     ;; "Scene that is leftover footage",
-     ;; "Dream Sequences",
-     ;; "Actors Forget their lines",
-     ;; "Repourposed location",
-     "Old Technology",
-     ;; "People clearly not in the same shot",
-     "Neil Breen is Better than You",
-     "Creepy Smile",
-     "Lazer Pointer",
-     ;; "Neil Breen Credits Himself",
-     "Terrible Death Scene"])
+  ["Someone Drunk",
+   "Pool Party",
+   "Driving in the Desert",
+   ;; "Greenscreen",
+   "Magic Neil Breen",
+   ;; "Flubbing their line",
+   "Skull or Skeleton",
+   "Shirtless Neil Breen",
+   ;; "Fade effect",
+   "Neil Breen Talks to Himself",
+   "Terrible People",
+   "Hacking",
+   "Someone Disapeers",
+   "Woman with no Bra",
+   ;; "Porno Quality Acting",
+   "Ghosts",
+   "Ripped Clothes",
+   "Someone Turns young",
+   "Topless Woman lying face down",
+   ;; "Acting Achieves opposite effect",
+   "Dead Wife",
+   "Clothes on the Ground",
+   ;; "Bad Gun Effects",
+   "Violence against Laptops",
+   "Throwing Stuff",
+   "Magic Rock",
+   ;; "Shot of Someones feet",
+   ;; "Fake Sound Effects",
+   "Nonspecific companies",
+   ;; "Bad Lip Syncing",
+   "Corporate businessmen",
+   ;; "Stock Footage",
+   ;; "Sound does not Sync",
+   "Blood on Neil Breen's Face",
+   "Characters Forget something happened",
+   ;; "Repurposed Prop",
+   ;; "Stock Music",
+   ;; "Scene that is leftover footage",
+   ;; "Dream Sequences",
+   ;; "Actors Forget their lines",
+   ;; "Repourposed location",
+   "Old Technology",
+   ;; "People clearly not in the same shot",
+   "Neil Breen is Better than You",
+   "Creepy Smile",
+   "Lazer Pointer",
+   ;; "Neil Breen Credits Himself",
+   "Terrible Death Scene"])
+
+
+(def didaskalia
+  [
+   "Greenscreen",
+   "Flubbing their line",
+   "Fade effect",
+   "Porno Quality Acting",
+   "Acting Achieves opposite effect",
+   "Bad Gun Effects",
+   "Shot of Someones feet",
+   "Fake Sound Effects",
+   "Bad Lip Syncing",
+   "Stock Footage",
+   "Sound does not Sync",
+   "Repurposed Prop",
+   "Stock Music",
+   "Scene that is leftover footage",
+   "Dream Sequences",
+   "Actors Forget their lines",
+   "Repourposed location",
+   "People clearly not in the same shot",
+   "Neil Breen Credits Himself",
+   ])
+
+(defn describe-didaskalia [didaskalium]
+  #_(get {"Greenscreen"
+        "Flubbing their line"
+        ;; "Fade effect"
+        "Porno Quality Acting"
+        "Acting Achieves opposite effect",
+        "Bad Gun Effects",
+        "Shot of Someones feet",
+        "Fake Sound Effects",
+        "Bad Lip Syncing",
+        "Stock Footage",
+        "Sound does not Sync",
+        "Repurposed Prop",
+        "Stock Music",
+        "Scene that is leftover footage",
+        "Dream Sequences",
+        "Actors Forget their lines",
+        "Repourposed location",
+        "People clearly not in the same shot",
+        "Neil Breen Credits Himself",}
+         didaskalium didaskalium)
+  didaskalium)
 
 (defn describe-trait [trait]
   (get {"Shirtless Neil Breen"                 "is shirtless"
@@ -236,7 +294,20 @@
         "Hacking"                              "is hacking into a computer system"
         "Someone Disapeers"                    "has recently disappeared"
         "Terrible People"                      "is a terrible person"
-        "Old Technology"                       "uses a lot of retro technology"}
+        "Old Technology"                       "uses a lot of retro technology"
+
+        "important online"          "is important online"
+        "secretly right"            "is secretly right"
+        "secret expert"             "is pretending to be a newbie"
+        "dying"                     "is dying"
+        "rich"                      "is very rich"
+        "protective of observatory" "is afraid of losing their status"
+        "has funding"               "wants to invest a lot of money"
+        "in debt"                   "is heavily in debt"
+        "outsider"                  "is an outsider"
+        "celebrity"                 "is a celebrity"
+        "has theory"                "has a unifying theory of the world"
+        "in hiding"                 "is in hiding"}
        trait trait))
 
 
@@ -294,13 +365,15 @@
     (into chars charges)))
 
 (defn gen-cast-neil-breen [{:keys [:size]
-                 :or   {size 2}}]
+                            :or   {size 2}}]
   (let [ids      (take size (map (comp - inc) (range)))
         names    (take size (shuffle char-names))
         tropes-a (take size (shuffle primary-tropes))
         tropes-b (take size (shuffle secondary-tropes))
-        traits   (take size (shuffle neil-breen-bingo))
-        roles    (take size (shuffle neil-breen-roles))
+        traits   (take size (shuffle (into neil-breen-bingo
+                                           all-traits)))
+        roles    (take size (shuffle (into neil-breen-roles
+                                           all-roles)))
         chars    (mapv #(-> {:type   :char
                              :db/id  %1
                              :name   %2
@@ -313,24 +386,24 @@
         charges  (map (fn [[id1 id2]] (gen-ship id1 id2)) pairs)]
     (into chars charges)))
 
-;(defn find-professors [db]
-;  (d/q '[:find :))
+                                        ;(defn find-professors [db]
+                                        ;  (d/q '[:find :))
 
-;(defn gen-romantic-ship [db]
-;  ())
+                                        ;(defn gen-romantic-ship [db]
+                                        ;  ())
 
 ;;; DB helpers
 
 (defn ->id [db thing]
   (cond
     (integer? thing)
-      thing
+    thing
     (string? thing)
-      (d/q '[:find ?c . :in $ ?name :where [?c :name ?name]] db thing)
+    (d/q '[:find ?c . :in $ ?name :where [?c :name ?name]] db thing)
     (map? thing)
-      (:db/id thing)
+    (:db/id thing)
     :else
-      (throw (str "can't convert to id: " (pr-str thing)))))
+    (throw (str "can't convert to id: " (pr-str thing)))))
 
 (defn id->name [db id]
   (:name (d/pull db [:name] id)))
@@ -349,9 +422,9 @@
         ships    (map #(d/pull db [:charge :dst] %) ship-ids)
         ships    (group-by :charge ships)]
     (assoc ent
-      :likes    (mapv #(id->name db (:db/id (:dst %))) (:like ships))
-      :dislikes (mapv #(id->name db (:db/id (:dst %))) (:dislike ships))
-      :neutral  (mapv #(id->name db (:db/id (:dst %))) (:neutral ships)))))
+           :likes    (mapv #(id->name db (:db/id (:dst %))) (:like ships))
+           :dislikes (mapv #(id->name db (:db/id (:dst %))) (:dislike ships))
+           :neutral  (mapv #(id->name db (:db/id (:dst %))) (:neutral ships)))))
 
 (defn all-char-ids [db]
   (map first (d/q '[:find ?c :where [?c :type :char]] db)))
@@ -365,32 +438,32 @@
 (defn find-mismatches [db]
   (d/q '[:find ?n1 ?n2 :in $ %
          :where (likes ?c1 ?c2) (dislikes ?c2 ?c1)
-                [?c1 :name ?n1] [?c2 :name ?n2]]
+         [?c1 :name ?n1] [?c2 :name ?n2]]
        db rules))
 
 (defn find-mutual-likes [db]
   (d/q '[:find ?n1 ?n2 :in $ %
          :where (likes ?c1 ?c2) (likes ?c2 ?c1)
-                [?c1 :name ?n1] [?c2 :name ?n2]]
+         [?c1 :name ?n1] [?c2 :name ?n2]]
        db rules))
 
 (defn find-mutual-dislikes [db]
   (d/q '[:find ?n1 ?n2 :in $ %
          :where (dislikes ?c1 ?c2) (dislikes ?c2 ?c1)
-                [?c1 :name ?n1] [?c2 :name ?n2]]
+         [?c1 :name ?n1] [?c2 :name ?n2]]
        db rules))
 
 (defn find-secret-crushes [db]
   (d/q '[:find ?n1 ?n2
          :where [?crush :secret-crush? true] [?crush :src ?c1] [?crush :dst ?c2]
-                [?c1 :name ?n1] [?c2 :name ?n2]]
+         [?c1 :name ?n1] [?c2 :name ?n2]]
        db))
 
 (defn find-jealousies [db]
   "1 is jealous of 2, because 1 has a crush on 3, and 3 likes 2"
   (d/q '[:find ?n1 ?n2 ?n3 :in $ %
          :where (jealous-of ?c1 ?c2 ?c3)
-                [?c1 :name ?n1] [?c2 :name ?n2] [?c3 :name ?n3]]
+         [?c1 :name ?n1] [?c2 :name ?n2] [?c3 :name ?n3]]
        db rules))
 
 (defn find-chars-by-value [db value]
@@ -399,15 +472,15 @@
 (defn find-common-values [db]
   (d/q '[:find ?n1 ?n2 ?v
          :where [?c1 :values ?v] [?c2 :values ?v]
-                [(not= ?c1 ?c2)]
-                [?c1 :name ?n1] [?c2 :name ?n2]]
+         [(not= ?c1 ?c2)]
+         [?c1 :name ?n1] [?c2 :name ?n2]]
        db))
 
 ;; TODO doesn't work
 (defn find-history [db id]
   (d/q '[:find ?a :in $ % ?c
          :where (directly-involves ?a ?c)]
-        db rules (->id db id)))
+       db rules (->id db id)))
 
 ;; TODO doesn't work
 (defn find-common-history [db id1 id2]
@@ -424,7 +497,7 @@
     :name :insult
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where (motive-to-harm ?c1 ?c2)
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:communalism]
     :significance :lowest}
@@ -433,8 +506,8 @@
     :name :accuse-of-violating-value
     :query '[:find ?c1 ?n1 ?c2 ?n2 ?v :in $ %
              :where (motive-to-harm ?c1 ?c2)
-                    [?harm :harms-value ?v] [?harm :perp ?c2]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?harm :harms-value ?v] [?harm :perp ?c2]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:communalism]
     :helps-value [4] ; helps the value being "defended"?
@@ -444,8 +517,8 @@
     :name :accuse-of-hypocrisy
     :query '[:find ?c1 ?n1 ?c2 ?n2 ?v :in $ %
              :where (motive-to-harm ?c1 ?c2)
-                    [?harm :harms-value ?v] [?harm :perp ?c2] [?c2 :values ?v]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?harm :harms-value ?v] [?harm :perp ?c2] [?c2 :values ?v]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:communalism]
     :helps-value [4] ; helps the value being "defended"?
@@ -455,7 +528,7 @@
     :name :ignore
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where (motive-to-harm ?c1 ?c2)
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:communalism]
     :significance :lowest}
@@ -464,7 +537,7 @@
     :name :compliment
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where (motive-to-help ?c1 ?c2)
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps [2]
     :helps-value [:communalism]
     :significance :lowest}
@@ -473,8 +546,8 @@
     :name :discuss-shared-value
     :query '[:find ?c1 ?n1 ?c2 ?n2 ?v :in $ %
              :where [?c1 :values ?v] [?c2 :values ?v]
-                    [(not= ?c1 ?c2)]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [(not= ?c1 ?c2)]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps [0 2]
     :helps-value [:communalism 4] ; helps the shared value in addition to communalism
     :significance :low}
@@ -483,9 +556,9 @@
     :name :praise-own-value
     :query '[:find ?c1 ?n1 ?c2 ?n2 ?v :in $ %
              :where [?c1 :values ?v]
-                    [?c2 :type :char] ; need this so we don't sometimes get past actions as ?c2
-                    [(not= ?c1 ?c2)] ; TODO this isn't actually working
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c2 :type :char] ; need this so we don't sometimes get past actions as ?c2
+             [(not= ?c1 ?c2)] ; TODO this isn't actually working
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps-value [4]
     :significance :lowest}
 
@@ -493,9 +566,9 @@
     :name :praise-others-value
     :query '[:find ?c1 ?n1 ?c2 ?n2 ?v :in $ %
              :where [?c2 :values ?v]
-                    [?c1 :type :char] ; need this so we don't sometimes get past actions as ?c1
-                    [(not= ?c1 ?c2)] ; TODO this isn't actually working
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :type :char] ; need this so we don't sometimes get past actions as ?c1
+             [(not= ?c1 ?c2)] ; TODO this isn't actually working
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps-value [:communalism 4]
     :significance :lowest}
 
@@ -503,9 +576,9 @@
     :name :disparage-others-value
     :query '[:find ?c1 ?n1 ?c2 ?n2 ?v :in $ %
              :where [?c2 :values ?v]
-                    [?c1 :type :char] ; need this so we don't sometimes get past actions as ?c1
-                    [(not= ?c1 ?c2)] ; TODO this isn't actually working
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :type :char] ; need this so we don't sometimes get past actions as ?c1
+             [(not= ?c1 ?c2)] ; TODO this isn't actually working
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:communalism 4]
     :significance :lowest}
@@ -514,15 +587,15 @@
     :name :make-request
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where [?c1 :type :char] [?c2 :type :char]
-                    [(not= ?c1 ?c2)]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [(not= ?c1 ?c2)]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :significance :low}
 
    {:type :action
     :name :confide-in
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where [?liking :charge :like] [?liking :src ?c1] [?liking :dst ?c2]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps-value [:communalism]
     :significance :low}
 
@@ -530,16 +603,16 @@
     :name :notice-presence
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where [?c1 :type :char] [?c2 :type :char]
-                    [(not= ?c1 ?c2)]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [(not= ?c1 ?c2)]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :significance :lowest}
 
    {:type :action
     :name :assert-authority
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where [?c1 :role :professor] [?c2 :type :char]
-                    [(not= ?c1 ?c2)]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [(not= ?c1 ?c2)]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps-value [:order]
     :significance :lowest}
 
@@ -547,8 +620,8 @@
     :name :undermine-authority
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where [?c1 :type :char] [?c2 :role :professor]
-                    [(not= ?c1 ?c2)]
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [(not= ?c1 ?c2)]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:order]
     :significance :low}
@@ -581,7 +654,7 @@
              :where (or [?c :role :journalist]
                         [?c :trait "celebrity"]
                         [?c :trait "important online"])
-                    [?c :name ?n]]
+             [?c :name ?n]]
     :significance :lowest}
 
    {:type :action
@@ -595,7 +668,7 @@
     :name :assist-with-research
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where (scientist ?c1) (scientist ?c2)
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :helps [2]
     :helps-value [:communalism :progress :science]
     :significance :lowest}
@@ -604,12 +677,11 @@
     :name :interfere-with-research
     :query '[:find ?c1 ?n1 ?c2 ?n2 :in $ %
              :where (nonscientist ?c1) (scientist ?c2)
-                    [?c1 :name ?n1] [?c2 :name ?n2]]
+             [?c1 :name ?n1] [?c2 :name ?n2]]
     :harms [2]
     :harms-value [:communalism :progress :science]
     :significance :low}
 
-  
 
    ])
 
@@ -626,49 +698,78 @@
         :compliment                "compliments"
         :confide-in                "confides in"
         :confess-to                "confesses to"
-        :accuse-of-hypocrisy       "accuses the hypocritical"}
+        :accuse-of-hypocrisy       "accuses the hypocritical"
+        :assert-authority          "asserts their authority before"
+        :undermine-authority       "undermines the authority of"
+        :assist-with-research      "assists with research done by"
+        :interfere-with-research   "interferes with research done by"}
        action-name (str action-name)))
+
+
+(defn describe-trope [trope]
+  #_(get {"Absent-Minded Professor"
+        "has disheveled hair and non-matching socks"
+        ;; "Big Fun"
+        ;; "Boss"
+        ;; "Bad-to-the-bone"
+        ;; "Parent Figure" "Innocent" "Clown" "Nerd" "Tortured Artist"
+        ;; "Gentle Giant" "Scruffy and Gruff" "Regal Presence" "Seductive"
+        ;; "Dumb Muscle" "Elderly Master" "Know-it-all" "Strict/By-the-books"
+        ;; "Rugged" "Lone Wolf" "Athlete" "Eccentric"
+        }
+         trope trope)
+
+  (str "AKA " "\"" trope "\""))
+
 
 (defn action->str
   ([action]
    (let [[c1-id c1-name c2-id c2-name & action-vals] (:vars action)]
      (str c1-name " " (action-name->str (:name action)) " " c2-name
-          (when (seq action-vals) (str ", that of " (str/join " " (map name action-vals)))))))
+          (when (seq action-vals) (str ", the value of " (str/join " " (map name action-vals)))))))
   ([action db]
    (let [[c1-id c1-name c2-id c2-name & action-vals] (:vars action)
-         c1 (describe-char db c1-id)
-         c2 (describe-char db c2-id)]
+         c1                                          (describe-char db c1-id)
+         c2                                          (describe-char db c2-id)]
      (str c1-name
           " who " (describe-trait (first (:trait c1)))
           " " (action-name->str (:name action)) " " c2-name
           (when (seq action-vals) (str ", that of " (str/join " " (map name action-vals))))
           (when-let [harms (:harms action)]
             (let [harms-value (:harms-value action)]
-              (str ". This harms " (case harms
-                                     [2] c2-name
-                                     [0] c1-name
-                                     [0 2] "them both"
-                                     "noone")
-                   " and hurts "
-                   (str/join ", " (into #{}
-                                        (map (fn [v] (cond (keyword? v) (name v)
-                                                           (integer? v) (name (first action-vals))))
-                                             harms-value)))
-                   " as a result")))
+              (str ". This move harms " (case harms
+                                          [2]   c2-name
+                                          [0]   c1-name
+                                          [0 2] "them both"
+                                          "noone")
+                   " and is an abomination to those who value "
+                   (str/join " and " (into #{}
+                                           (map (fn [v] (cond (keyword? v) (name v)
+                                                              (integer? v) (name (first action-vals))))
+                                                harms-value))))))
           (when-let [helps (:helps action)]
             (let [helps-value (:helps-value action)]
-              (str ". This helps " (case helps
-                                     [2] c2-name
-                                     [0] c1-name
-                                     [0 2] "them both"
-                                     "noone")
-                   " and strengthens "
-                   (str/join ", " (into #{}
-                                        (map (fn [v] (cond (keyword? v) (name v)
-                                                           (integer? v) (name (first action-vals))))
-                                             helps-value)))
-                   " as a result")))
-          ". " c2-name " "(describe-trait (first (:trait c2))) "."))))
+              (str ". This move helps " (case helps
+                                          [2]   c2-name
+                                          [0]   c1-name
+                                          [0 2] "them both"
+                                          "noone")
+                   " and is celebrated by those who value "
+                   (str/join " and " (into #{}
+                                           (map (fn [v] (cond (keyword? v) (name v)
+                                                              (integer? v) (name (first action-vals))))
+                                                helps-value))))))
+          ". " c2-name " " (describe-trait (first (:trait c2))) ". "
+          (when-let [trope (:trope c2)]
+            (str c2-name
+                 " " (describe-trope (first trope))
+                 " " (describe-trope (second trope))
+                 ". "))
+          "\n"
+
+          "[" (describe-didaskalia (rand-nth didaskalia)) "]"
+          "\n"
+          ))))
 
 (defn print-actions! [actions]
   (println "==== ACTIONS: ====")
@@ -685,22 +786,22 @@
 (defn draw-actions
   ([db] (draw-actions db 5))
   ([db limit]
-    (let [actions (vec (take limit (shuffle (available-actions db))))]
-      (print-actions! actions)
-      actions)))
+   (let [actions (vec (take limit (shuffle (available-actions db))))]
+     (print-actions! actions)
+     actions)))
 
 (defn draw-actions-for-char
   ([db char] (draw-actions-for-char db char 5))
   ([db char limit]
-    (let [char (->id db char)
-          actions
-          (->> (available-actions db)
-               (filter #(= (first (:vars %)) char))
-               (shuffle)
-               (take limit)
-               (vec))]
-      (print-actions! actions)
-      actions)))
+   (let [char (->id db char)
+         actions
+         (->> (available-actions db)
+              (filter #(= (first (:vars %)) char))
+              (shuffle)
+              (take limit)
+              (vec))]
+     (print-actions! actions)
+     actions)))
 
 (defn perform-action! [conn action]
   (let [perp-id       (first (:vars action))
@@ -724,7 +825,7 @@
       (prn char))))
 
 (defn gen-world-neil-breen! [{:keys [conn]}]
-  (let [cast (gen-cast-neil-breen {:size 12})]
+  (let [cast (gen-cast-neil-breen {:size 5})]
     (d/reset-conn! conn (d/empty-db schema))
     (d/transact! conn cast)
     (doseq [char cast :when (map? char)]
@@ -734,7 +835,10 @@
 (defn perform-random-action! [conn]
   (let [action (first (draw-actions @conn 1))]
     (perform-action! conn action)
+    (println action)
     action))
+
+
 
 (defn -main []
   (gen-world! conn))
