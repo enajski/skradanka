@@ -6,6 +6,12 @@
             [reagent.core :as reagent])
   (:require-macros [skradanka.music :refer [build-for-cljs]]))
 
+
+(defonce ui-state (reagent/atom @c/*state))
+
+(defn sync-ui []
+  (reset! ui-state @c/*state))
+
 (defn resize [{:keys [context] :as game}]
   (let [display-width context.canvas.clientWidth
         display-height context.canvas.clientHeight]
@@ -58,6 +64,7 @@
 
 (defonce choices-div (js/document.querySelector "#choices"))
 
+(declare render-choices)
 
 (defn choice-item [i choice]
   [:button {:data-choice-id i
@@ -68,6 +75,8 @@
                                 choice (get choices choice-id)]
                             (println choice)
                             (c/tick-sim choice)
+
+                            (sync-ui)
 
                             (let [{textmode-value :textmode
                                    console-value  :console} @c/*state]
@@ -85,12 +94,14 @@
 
 
 (defn root []
-  (let [{:keys [choices]} @c/*state]
+  (let [{:keys [choices]} @ui-state]
+    (println "choices:" choices)
     [:div#root
      (choices-list choices)]))
 
 
-(defn mount-reagent []
+(defn render-choices []
+  (println "i am render")
   (reagent/render [root]
                   choices-div))
 
@@ -107,8 +118,12 @@
                             :total-time 0)]
     (listen-for-mouse canvas)
     (listen-for-keys)
+
     (c/init initial-game)
-    (mount-reagent)
+
+    (sync-ui)
+
+    (render-choices)
     (game-loop initial-game)
     context))
 

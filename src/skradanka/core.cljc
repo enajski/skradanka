@@ -33,6 +33,10 @@
 (defn get-conn []
   (:conn @*state))
 
+
+(defn draw-actions [conn]
+  (db/draw-actions @conn 3))
+
 (defn init [game]
   ;; allow transparency in images
   (gl game enable (gl game BLEND))
@@ -42,7 +46,7 @@
   (let [conn    (get-conn)
         _       (db/gen-world-neil-breen! {:conn (get-conn)})
         chars   (db/describe-all-chars @conn)
-        choices (db/draw-actions @conn 3)]
+        choices (draw-actions conn)]
     (println chars)
     (swap! *state assoc
            :characters chars
@@ -87,15 +91,17 @@
   ([action]
    (println "action: " action)
    (let [{:keys [turn conn]} @*state
-         action! (db/perform-action! conn action)]
+         action! (db/perform-action! conn action)
+         new-choices (draw-actions conn)]
      (println "Turn " turn)
-     (println "Action!:" action!)
+     (println new-choices )
 
      (swap! *state
             (fn [state]
               (-> state
                   (update :turn inc)
-                  (assoc :textmode (textmode/calculate-textmode state))
+                  (assoc :textmode (textmode/calculate-textmode state)
+                         :choices new-choices)
                   (update :console (fn [val]
                                      (str/join "\n" [val
                                                      (str "Scene " turn)
