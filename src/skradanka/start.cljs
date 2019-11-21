@@ -69,11 +69,9 @@
 (defn choice-item [i choice]
   [:button {:data-choice-id i
             :on-click (fn [e]
-                        (when-let [choice-id (int (.-data-choice-id (.-target e)))]
-                          (println choice-id)
+                        (when-let [choice-id (.-value (.getNamedItem (.-attributes (.-target e)) "data-choice-id" ))]
                           (let [{:keys [choices]} @c/*state
-                                choice (get choices choice-id)]
-                            (println choice)
+                                choice (get choices (int choice-id))]
                             (c/tick-sim choice)
 
                             (sync-ui)
